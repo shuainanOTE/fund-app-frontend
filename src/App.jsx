@@ -9,7 +9,7 @@ function App() {
 
   const loadData = async () => {
     try {
-      const res = await fetch("api/funds");
+      const res = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
       const apiData = await res.json();
       
       // 讀取 LocalStorage 中的個人設定 (成本與股數)
