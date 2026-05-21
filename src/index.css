@@ -11,13 +11,18 @@ html, body {
   /* 防止長按選取文字 (像原生 APP) */
   user-select: none;
   -webkit-user-select: none;
+  background-color: black;
 }
 
 #root {
-  height: 100dvh; /* 使用動態視窗高度 */
+  height: 100dvh;
+  /* 確保即便內容不到這麼高，底色也是黑的 */
+  background-color: black; 
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* 處理 iPhone 底部橫條遮擋問題 */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .main-content {
