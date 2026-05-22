@@ -29,7 +29,7 @@ function App() {
 
         const processed = apiData.map((s) => {
           const id = s.name;
-          const saved = savedSettings[id] || { cost: s.nav_today * 0.9, shares: 1000 };
+          const saved = savedSettings[id] || {shares: 1000 };
           return {
             ...s,
             id,
@@ -37,7 +37,7 @@ function App() {
             update_date: s.update_date,
             cost: saved.cost,
             shares: saved.shares,
-            profitPercent: ((s.nav_today - saved.cost) / saved.cost) * 100,
+            profitPercent: s.changePercent,
           };
         }).sort((a, b) => b.profitPercent - a.profitPercent);
 
@@ -72,9 +72,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1D23] text-white pt-15 p-4">
+    <div className="min-h-screen bg-[#1A1D23] text-white pt-16 p-4">
       {isLoading && (
-        <div className="fixed top-8 left-6 z-50 text-gray-500 text-xs font-mono">
+        <div className="fixed top-10 left-6 z-50 text-gray-500 text-xs font-mono">
           {statusMessage === "Loading" ? (
             <span className="animate-dots"></span>
           ) : (
