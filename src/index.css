@@ -50,3 +50,13 @@ html, body {
   content: "";
   animation: dots 2.0s infinite;
 }
+
+/* 針對 Webkit 瀏覽器 (Chrome, Safari, Edge) */
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* 針對 Firefox */
+.scroll-container {
+  scrollbar-width: none;
+}
