@@ -74,7 +74,7 @@ function App() {
   return (
     <div className="min-h-screen bg-[#1A1D23] text-white pt-16 p-4 scroll-container">
       {isLoading && (
-        <div className="fixed top-10 left-6 z-50 text-gray-500 text-xs font-mono">
+        <div className="fixed top-11 left-6 z-50 text-gray-500 text-xs font-mono">
           {statusMessage === "Loading" ? (
             <span className="animate-dots"></span>
           ) : (
