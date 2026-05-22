@@ -54,7 +54,7 @@ export default function StockCard({ stock, index, onClick, onDelete }) {
         dragConstraints={{ left: -80, right: 0 }} // 限制滑動範圍
         dragElastic={{ left: 0.1, right: 0 }} // 右側不具備彈性，左側有輕微彈性
         onDragEnd={handleDragEnd}
-        className={`relative z-10 p-6 flex justify-between items-center touch-pan-y ${bgColor} backdrop-blur-md 
+        className={`relative z-10 p-6 flex justify-between items-center touch-pan-y ${bgColor} backdrop-blur-md
         border border-white/60 
         shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]`}
         onClick={() => {
