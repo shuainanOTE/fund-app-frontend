@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 html, body {
-  /* 鎖定滑動行為，避免手機瀏覽器的預設行為 */
-  overscroll-behavior: none; 
   /* 禁止整個頁面的上下捲動，改由內部容器控制 */
   overflow: hidden; 
   height: 100%;
@@ -12,6 +10,14 @@ html, body {
   user-select: none;
   -webkit-user-select: none;
   background-color: #1A1D23;
+}
+
+/* 新增一個容器給內容使用 */
+.scroll-container {
+  height: 100%;      /* 設定高度 */
+  overflow-y: auto;  /* 關鍵：讓這裡可以垂直捲動 */
+  overscroll-behavior: contain; /* 避免觸發瀏覽器預設的下拉重新整理 */
+  -webkit-overflow-scrolling: touch; /* 讓 iOS 捲動更順暢 */
 }
 
 #root {
