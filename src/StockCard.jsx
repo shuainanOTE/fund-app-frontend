@@ -69,7 +69,7 @@ export default function StockCard({ stock, index, onClick, onDelete }) {
             {stock.name}
           </div>
           <span className="text-[#0505058b] text-xs font-medium">
-            {stock.update_date
+            {stock.updateDate
               ?.split("-")
               .slice(1)
               .map((s) => parseInt(s))
@@ -81,7 +81,7 @@ export default function StockCard({ stock, index, onClick, onDelete }) {
         {/* 右側資訊 */}
         <div className="flex flex-col items-end">
           <p className="text-[16px] font-bold text-[#333] mb-1 px-2">
-            {stock.price.toFixed(2)}
+            {(stock.nav || 0).toFixed(2)}
           </p>
           {/* 涨跌幅保持原色，但在柔和背景下更顯眼 */}
           <div
@@ -96,7 +96,7 @@ export default function StockCard({ stock, index, onClick, onDelete }) {
               fill={isPos ? "#dc2626" : "#15803d"}
               className={`mr-1 ${isPos ? "" : "rotate-180"}`}
             />
-            {Math.abs(stock.profitPercent).toFixed(2)}%
+            {Math.abs(stock.profitPercent || 0).toFixed(2)}%
           </div>
         </div>
       </motion.div>
