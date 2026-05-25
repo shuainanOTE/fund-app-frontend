@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RefreshCw } from "lucide-react";
 import StockCard from "./StockCard";
 
 function App() {
@@ -7,55 +8,81 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [editingStock, setEditingStock] = useState(null);
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  // 放在 App 元件內部的任何地方
+  const processAndSetData = (apiData) => {
+    const savedSettings = JSON.parse(localStorage.getItem("myStocks") || "{}");
+
+    const processed = apiData
+      .map((s) => {
+        const id = s.name;
+        const saved = savedSettings[id] || { shares: 1000 };
+        return {
+          ...s,
+          id,
+          cost: saved.cost,
+          shares: saved.shares,
+          profitPercent: s.changePercent,
+        };
+      })
+      .sort((a, b) => b.profitPercent - a.profitPercent);
+
+    setStocks(processed);
+    localStorage.setItem("cachedStocks", JSON.stringify(processed));
+  };
 
   const loadData = async () => {
-    // 1. 先顯示上次的快取資料
     const cachedData = localStorage.getItem("cachedStocks");
     if (cachedData) setStocks(JSON.parse(cachedData));
 
     setIsLoading(true);
     setStatusMessage("Loading");
 
-    // 定義遞迴請求函數
     const attemptFetch = async () => {
       try {
-        const res = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
-        // const res = await fetch("http://localhost:8080/api/funds");
+        const res = await fetch("http://localhost:8080/api/funds");
         if (!res.ok) throw new Error("Server not ready");
-        
+
         const apiData = await res.json();
-        
-        const savedSettings = JSON.parse(localStorage.getItem("myStocks") || "{}");
-
-        const processed = apiData.map((s) => {
-          const id = s.name;
-          const saved = savedSettings[id] || {shares: 1000 };
-          return {
-            ...s,
-            id,
-            price: s.nav_today,
-            update_date: s.update_date,
-            cost: saved.cost,
-            shares: saved.shares,
-            profitPercent: s.changePercent,
-          };
-        }).sort((a, b) => b.profitPercent - a.profitPercent);
-
-        setStocks(processed);
-        localStorage.setItem("cachedStocks", JSON.stringify(processed));
+        processAndSetData(apiData); // 使用獨立出來的函式
 
         setStatusMessage("更新成功");
-        setTimeout(() => setIsLoading(false), 2000); // 顯示成功後 2 秒關閉
-
+        setTimeout(() => setIsLoading(false), 2000);
       } catch (e) {
         console.warn("後端尚未甦醒，3秒後重試...");
-        // 失敗則 3 秒後再次執行 attemptFetch
         setTimeout(attemptFetch, 3000);
       }
     };
-
-    // 啟動第一次請求
     attemptFetch();
+  };
+
+  const handleManualUpdate = async () => {
+    setIsSpinning(true);
+    setStatusMessage("Loading");
+    setIsLoading(true);
+
+    try {
+      const updateRes = await fetch("http://localhost:8080/api/update");
+      if (!updateRes.ok) throw new Error("Update failed");
+
+      const fundsRes = await fetch("http://localhost:8080/api/funds");
+      if (!fundsRes.ok) throw new Error("Fetch funds failed");
+
+      const newData = await fundsRes.json();
+      processAndSetData(newData); // 修改這裡！呼叫正確的函式名稱
+
+      setStatusMessage("Update successful");
+    } catch (e) {
+      console.error("更新過程中發生錯誤:", e);
+      setStatusMessage("Update failed");
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+        setIsSpinning(false);
+      }, 1000);
+      setTimeout(() => setStatusMessage(""), 2000);
+    }
   };
 
   useEffect(() => {
@@ -78,11 +105,27 @@ function App() {
           {statusMessage === "Loading" ? (
             <span className="animate-dots"></span>
           ) : (
-            <span className="text-green-500">Update successful  !!</span>
+            <span className="text-green-500">Update successful !!</span>
           )}
         </div>
       )}
-      
+
+      <motion.button
+        onClick={handleManualUpdate}
+        disabled={isSpinning}
+        whileTap={{ scale: 0.8 }}
+        animate={{ rotate: isSpinning ? 360 : 0 }}
+        transition={
+          isSpinning
+            ? { duration: 1, repeat: Infinity, ease: "linear" }
+            : { duration: 0.2, ease: "easeOut" }
+        }
+        className="fixed top-9 right-6 z-50 p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+        title="手動更新資料"
+      >
+        <RefreshCw size={16} />
+      </motion.button>
+
       <div className="space-y-6">
         <AnimatePresence>
           {stocks.map((s, index) => (
