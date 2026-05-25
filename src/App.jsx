@@ -41,7 +41,7 @@ function App() {
 
     const attemptFetch = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/funds");
+        const res = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
         if (!res.ok) throw new Error("Server not ready");
 
         const apiData = await res.json();
@@ -63,10 +63,10 @@ function App() {
     setIsLoading(true);
 
     try {
-      const updateRes = await fetch("http://localhost:8080/api/update");
+      const updateRes = await fetch("https://fund-app-backend-9wbm.onrender.com/api/update");
       if (!updateRes.ok) throw new Error("Update failed");
 
-      const fundsRes = await fetch("http://localhost:8080/api/funds");
+      const fundsRes = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
       if (!fundsRes.ok) throw new Error("Fetch funds failed");
 
       const newData = await fundsRes.json();
