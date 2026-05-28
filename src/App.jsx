@@ -10,7 +10,6 @@ function App() {
   const [editingStock, setEditingStock] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
 
-  // 放在 App 元件內部的任何地方
   const processAndSetData = (apiData) => {
     const savedSettings = JSON.parse(localStorage.getItem("myStocks") || "{}");
 
@@ -45,7 +44,7 @@ function App() {
         if (!res.ok) throw new Error("Server not ready");
 
         const apiData = await res.json();
-        processAndSetData(apiData); // 使用獨立出來的函式
+        processAndSetData(apiData);
 
         setStatusMessage("更新成功");
         setTimeout(() => setIsLoading(false), 2000);
@@ -70,7 +69,7 @@ function App() {
       if (!fundsRes.ok) throw new Error("Fetch funds failed");
 
       const newData = await fundsRes.json();
-      processAndSetData(newData); // 修改這裡！呼叫正確的函式名稱
+      processAndSetData(newData);
 
       setStatusMessage("Update successful");
     } catch (e) {
