@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import StockCard from "./StockCard";
+import FloatingBackground from "./FloatingBackground";
+
+// const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "https://fund-app-backend-9wbm.onrender.com/api";
 
 function App() {
   const [stocks, setStocks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
-  const [editingStock, setEditingStock] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
+  const navigate = useNavigate();
 
   const processAndSetData = (apiData) => {
     const savedSettings = JSON.parse(localStorage.getItem("myStocks") || "{}");
@@ -40,7 +45,7 @@ function App() {
 
     const attemptFetch = async () => {
       try {
-        const res = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
+        const res = await fetch(`${API_BASE_URL}/fetch/all`);
         if (!res.ok) throw new Error("Server not ready");
 
         const apiData = await res.json();
@@ -62,10 +67,13 @@ function App() {
     setIsLoading(true);
 
     try {
-      const updateRes = await fetch("https://fund-app-backend-9wbm.onrender.com/api/update");
-      if (!updateRes.ok) throw new Error("Update failed");
+      await Promise.all([
+        fetch(`${API_BASE_URL}/update/fund`),
+        fetch(`${API_BASE_URL}/update/holding`),
+        fetch(`${API_BASE_URL}/update/performance`),
+      ]);
 
-      const fundsRes = await fetch("https://fund-app-backend-9wbm.onrender.com/api/funds");
+      const fundsRes = await fetch(`${API_BASE_URL}/fetch/all`);
       if (!fundsRes.ok) throw new Error("Fetch funds failed");
 
       const newData = await fundsRes.json();
@@ -99,6 +107,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#1A1D23] text-white pt-16 p-4 scroll-container">
+      <FloatingBackground />
       {isLoading && (
         <div className="fixed top-11 left-6 z-50 text-gray-500 text-xs font-mono">
           {statusMessage === "Loading" ? (
@@ -132,7 +141,9 @@ function App() {
               key={s.id}
               index={index}
               stock={s}
-              onClick={() => setEditingStock(s)}
+              onClick={() => {
+                navigate(`/detail/${s.id}`, { state: { stock: s } });
+              }}
               onDelete={() => {
                 const newList = stocks.filter((x) => x.id !== s.id);
                 updateStocksAndSave(newList);
