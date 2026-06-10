@@ -1,41 +1,41 @@
 @import "tailwindcss";
 
 html, body {
-  /* 禁止整個頁面的上下捲動，改由內部容器控制 */
-  overflow: hidden; 
-  height: 100%;
   margin: 0;
   padding: 0;
-  /* 防止長按選取文字 (像原生 APP) */
-  user-select: none;
-  -webkit-user-select: none;
+  width: 100%;
+  height: calc(100% + env(safe-area-inset-top)); 
+  overflow: hidden;
   background-color: #1A1D23;
 }
 
-/* 新增一個容器給內容使用 */
-.scroll-container {
-  height: 100%;      /* 設定高度 */
-  overflow-y: auto;  /* 關鍵：讓這裡可以垂直捲動 */
-  overscroll-behavior: contain; /* 避免觸發瀏覽器預設的下拉重新整理 */
-  -webkit-overflow-scrolling: touch; /* 讓 iOS 捲動更順暢 */
-}
-
 #root {
-  height: 100dvh;
-  /* 確保即便內容不到這麼高，底色也是黑的 */
-  background-color:#1A1D23; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(0px - env(safe-area-inset-top)); 
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* 處理 iPhone 底部橫條遮擋問題 */
-  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #1A1D23;
 }
 
-.main-content {
-  flex: 1;
-  /* 只讓內容區域內部滑動 */
+.app-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* 讓滑動保持滑順感 */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-top: 4rem; 
+  padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); 
+  isolation: isolate;
+}
+.app-container::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes dots {
@@ -49,14 +49,4 @@ html, body {
 .animate-dots::after {
   content: "";
   animation: dots 2.0s infinite;
-}
-
-/* 針對 Webkit 瀏覽器 (Chrome, Safari, Edge) */
-.scroll-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* 針對 Firefox */
-.scroll-container {
-  scrollbar-width: none;
 }

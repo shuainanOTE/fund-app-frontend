@@ -32,17 +32,18 @@ export default function Detail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1D23] text-gray-100 p-5 pb-12 overflow-y-auto font-sans">
-        <FloatingBackground />
+    <div className="absolute inset-0 bg-[#1A1D23] text-gray-100 font-sans">
+      <FloatingBackground />
+      <div className="absolute inset-0 overflow-y-auto pt-16 pb-8 px-5">
       {/* 頂部導覽列 */}
       <motion.button
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={() => navigate(-1)}
-        className="flex items-center text-white/60 hover:text-white mb-6 gap-2 font-medium active:scale-95 transition-all"
+        className="flex items-center text-white hover:text-white mb-6 gap-2 font-bold active:scale-95 transition-all"
       >
-        <ArrowLeft size={22} />
-        <span className="text-sm tracking-wide">返回列表</span>
+        <ArrowLeft size={15} strokeWidth={5} />
+        <span className="text-sm tracking-wide">返回</span>
       </motion.button>
 
       <motion.div
@@ -54,14 +55,14 @@ export default function Detail() {
         {/* 1. 基金主視覺卡片 */}
         <motion.div
           variants={itemVars}
-          className="relative overflow-hidden rounded-[2rem] p-8 bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+          className="relative overflow-hidden rounded-4xl p-8 bg-white/3 backdrop-blur-2xl border border-white/8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
 
           <div className="relative z-10 flex justify-between items-start">
             <div className="flex flex-col">
-              <h1 className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-cyan-200 via-blue-300 to-purple-300 mb-2 leading-tight">
+              <h1 className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-br from-cyan-200 via-blue-300 to-purple-300 mb-2 leading-tight">
                 {stock.name}
               </h1>
               <p className="text-white/40 text-xs font-mono tracking-wider">
@@ -94,7 +95,7 @@ export default function Detail() {
         {/* 2. 績效表現區塊 */}
         <motion.div
           variants={itemVars}
-          className="rounded-[2rem] p-6 bg-white/[0.02] border border-white/[0.05]"
+          className="rounded-4xl p-6 bg-white/2 border border-white/5"
         >
           <div className="flex items-center gap-2 mb-5 text-white/80">
             <TrendingUp size={20} className="text-cyan-400" />
@@ -108,7 +109,7 @@ export default function Detail() {
               return (
                 <div
                   key={i}
-                  className="flex flex-col items-center justify-center bg-white/[0.03] p-3 rounded-2xl border border-white/[0.02] hover:bg-white/[0.06] transition-colors"
+                  className="flex flex-col items-center justify-center bg-white/3 p-3 rounded-2xl border border-white/2 hover:bg-white/6 transition-colors"
                 >
                   <span className="text-[10px] text-white/40 uppercase font-bold tracking-wider mb-1">
                     {p.period}
@@ -129,7 +130,7 @@ export default function Detail() {
         {stock.holdings && stock.holdings.length > 0 && (
           <motion.div
             variants={itemVars}
-            className="rounded-[2rem] p-6 bg-white/[0.02] border border-white/[0.05]"
+            className="rounded-4xl p-6 bg-white/2 border border-white/5"
           >
             <div className="flex items-center gap-2 mb-2 text-white/80">
               <PieChart size={20} className="text-purple-400" />
@@ -140,7 +141,7 @@ export default function Detail() {
               {stock.holdings.map((h, i) => (
                 <div
                   key={i}
-                  className="flex justify-between items-center py-3.5 border-b border-white/[0.04] last:border-0 group"
+                  className="flex justify-between items-center py-3.5 border-b border-white/4 last:border-0 group"
                 >
                   <span className="text-sm text-white/70 group-hover:text-white transition-colors">
                     {h.stock}
@@ -154,6 +155,7 @@ export default function Detail() {
           </motion.div>
         )}
       </motion.div>
+      </div>
     </div>
   );
 }

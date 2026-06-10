@@ -94,6 +94,11 @@ function App() {
 
   useEffect(() => {
     loadData();
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event("resize"));
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const updateStocksAndSave = (newList) => {
@@ -106,51 +111,53 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1D23] text-white pt-16 p-4 scroll-container">
+    <div className="absolute inset-0 bg-[#1A1D23] text-white">
       <FloatingBackground />
-      {isLoading && (
-        <div className="fixed top-11 left-6 z-50 text-gray-500 text-xs font-mono">
-          {statusMessage === "Loading" ? (
-            <span className="animate-dots"></span>
-          ) : (
-            <span className="text-green-500">Update successful !!</span>
-          )}
+      <div className="app-container">
+        {isLoading && (
+          <div className="fixed top-11 left-6 z-50 text-gray-500 text-xs font-mono">
+            {statusMessage === "Loading" ? (
+              <span className="animate-dots"></span>
+            ) : (
+              <span className="text-green-500">Update successful !!</span>
+            )}
+          </div>
+        )}
+
+        <motion.button
+          onClick={handleManualUpdate}
+          disabled={isSpinning}
+          whileTap={{ scale: 0.8 }}
+          animate={{ rotate: isSpinning ? 360 : 0 }}
+          transition={
+            isSpinning
+              ? { duration: 1, repeat: Infinity, ease: "linear" }
+              : { duration: 0.2, ease: "easeOut" }
+          }
+          className="fixed top-9 right-6 z-50 p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+          title="手動更新資料"
+        >
+          <RefreshCw size={16} />
+        </motion.button>
+
+        <div className="space-y-6 p-4">
+          <AnimatePresence>
+            {stocks.map((s, index) => (
+              <StockCard
+                key={s.id}
+                index={index}
+                stock={s}
+                onClick={() => {
+                  navigate(`/detail/${s.id}`, { state: { stock: s } });
+                }}
+                onDelete={() => {
+                  const newList = stocks.filter((x) => x.id !== s.id);
+                  updateStocksAndSave(newList);
+                }}
+              />
+            ))}
+          </AnimatePresence>
         </div>
-      )}
-
-      <motion.button
-        onClick={handleManualUpdate}
-        disabled={isSpinning}
-        whileTap={{ scale: 0.8 }}
-        animate={{ rotate: isSpinning ? 360 : 0 }}
-        transition={
-          isSpinning
-            ? { duration: 1, repeat: Infinity, ease: "linear" }
-            : { duration: 0.2, ease: "easeOut" }
-        }
-        className="fixed top-9 right-6 z-50 p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
-        title="手動更新資料"
-      >
-        <RefreshCw size={16} />
-      </motion.button>
-
-      <div className="space-y-6">
-        <AnimatePresence>
-          {stocks.map((s, index) => (
-            <StockCard
-              key={s.id}
-              index={index}
-              stock={s}
-              onClick={() => {
-                navigate(`/detail/${s.id}`, { state: { stock: s } });
-              }}
-              onDelete={() => {
-                const newList = stocks.filter((x) => x.id !== s.id);
-                updateStocksAndSave(newList);
-              }}
-            />
-          ))}
-        </AnimatePresence>
       </div>
     </div>
   );

@@ -36,20 +36,28 @@ export default function StockCard({ stock, index, onClick, onDelete }) {
       >
         <Trash2 size={24} />
       </button>
-
       {/* 卡片本體 */}
       <motion.div
         drag="x"
+        dragPropagation={true}
+        dragDirectionLock={true}
+        dragListener={true}
         animate={controls}
-        whileTap={{ opacity: 0.9 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        whileTap={{ opacity: 0.95, scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
         dragConstraints={{ left: -80, right: 0 }}
         dragElastic={{ left: 0.1, right: 0 }}
         onDragEnd={handleDragEnd}
-        className={`relative z-10 p-6 flex justify-between items-center touch-pan-y ${bgColor} backdrop-blur-md
-        border border-white/60 
-        shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]`}
+        style={{
+          touchAction: "pan-y",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+        }}
+        className={`relative z-10 p-6 flex justify-between items-center ${bgColor} backdrop-blur-md
+          border border-white/60 
+          shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]`}
         onClick={() => {
+          if (controls.isAnimating) return;
           controls.start({ x: 0 });
           onClick();
         }}
